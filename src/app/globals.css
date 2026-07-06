@@ -1,26 +1,348 @@
 @import "tailwindcss";
 
+/* ============================================================
+   NEXUS DESIGN TOKENS — SUJITH.AI
+   ============================================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* --- CORE PALETTE --- */
+  --void:           #000508;
+  --abyss:          #010C14;
+  --surface:        #050F1A;
+
+  /* Ferrari Red — power, speed, passion */
+  --ferrari:        #DC0000;
+  --ferrari-bright: #FF1801;
+  --ferrari-dim:    #7A0000;
+  --ferrari-glow:   rgba(220, 0, 0, 0.35);
+  --ferrari-glow-sm:rgba(220, 0, 0, 0.15);
+
+  /* Ion Cyan — intelligence, technology, future */
+  --ion:            #00D4FF;
+  --ion-bright:     #00FFFF;
+  --ion-dim:        #005F77;
+  --ion-glow:       rgba(0, 212, 255, 0.25);
+  --ion-glow-sm:    rgba(0, 212, 255, 0.10);
+
+  /* Gold — achievement, premium, excellence */
+  --gold:           #C9A84C;
+  --gold-bright:    #FFD700;
+  --gold-dim:       #6B5520;
+  --gold-glow:      rgba(201, 168, 76, 0.30);
+
+  /* Glass surfaces */
+  --glass:          rgba(0, 212, 255, 0.03);
+  --glass-hover:    rgba(0, 212, 255, 0.06);
+  --glass-border:   rgba(0, 212, 255, 0.10);
+  --glass-border-active: rgba(0, 212, 255, 0.28);
+
+  /* Text scale */
+  --text-primary:   #E8F4FF;
+  --text-secondary: #4A7A9B;
+  --text-dim:       #1A3A50;
+  --text-terminal:  #00D4FF;
+
+  /* Status colors */
+  --status-ok:      #00FF88;
+  --status-warn:    #FF8C00;
+  --status-crit:    #FF0040;
+
+  /* --- TYPOGRAPHY (populated by Next.js font vars) --- */
+  --font-display: var(--font-space-grotesk, 'Space Grotesk', sans-serif);
+  --font-body:    var(--font-inter, 'Inter', sans-serif);
+  --font-mono:    var(--font-jetbrains, 'JetBrains Mono', monospace);
+  --font-hud:     var(--font-orbitron, 'Orbitron', sans-serif);
+
+  /* --- Z-INDEX LAYERS --- */
+  --z-world:     0;
+  --z-interface: 10;
+  --z-panels:    20;
+  --z-hud:       30;
+  --z-overlay:   40;
+  --z-cursor:    50;
+  --z-boot:      60;
 }
+
+/* ============================================================
+   TAILWIND v4 THEME EXTENSION
+   Exposes CSS vars as Tailwind utilities (bg-void, text-ferrari…)
+   ============================================================ */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-void:            var(--void);
+  --color-abyss:           var(--abyss);
+  --color-surface:         var(--surface);
+  --color-ferrari:         var(--ferrari);
+  --color-ferrari-bright:  var(--ferrari-bright);
+  --color-ferrari-dim:     var(--ferrari-dim);
+  --color-ion:             var(--ion);
+  --color-ion-bright:      var(--ion-bright);
+  --color-ion-dim:         var(--ion-dim);
+  --color-gold:            var(--gold);
+  --color-gold-bright:     var(--gold-bright);
+  --color-text-primary:    var(--text-primary);
+  --color-text-secondary:  var(--text-secondary);
+  --color-text-dim:        var(--text-dim);
+  --color-text-terminal:   var(--text-terminal);
+  --color-ok:              var(--status-ok);
+  --color-warn:            var(--status-warn);
+  --color-crit:            var(--status-crit);
+  --color-glass-border:    var(--glass-border);
+
+  --font-display: var(--font-display);
+  --font-body:    var(--font-body);
+  --font-mono:    var(--font-mono);
+  --font-hud:     var(--font-hud);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background: var(--void);
+  color: var(--text-primary);
+  overflow: hidden;
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+  background: var(--void);
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  cursor: none;
+}
+
+/* Hide system cursor everywhere */
+* { cursor: none !important; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar       { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: var(--void); }
+::-webkit-scrollbar-thumb { background: var(--ferrari-dim); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ferrari); }
+
+::selection {
+  background: var(--ferrari-glow);
+  color: var(--text-primary);
+}
+
+/* ============================================================
+   HUD GLASS PANEL
+   ============================================================ */
+
+.glass-panel {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* L-bracket corner accents */
+.hud-corners {
+  position: relative;
+}
+.hud-corners::before,
+.hud-corners::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+  z-index: 1;
+}
+.hud-corners::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid var(--ion);
+  border-left: 1px solid var(--ion);
+}
+.hud-corners::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 1px solid var(--ion);
+  border-right: 1px solid var(--ion);
+}
+
+.hud-corners-ferrari::before { border-color: var(--ferrari); }
+.hud-corners-ferrari::after  { border-color: var(--ferrari); }
+
+/* ============================================================
+   GLOW UTILITIES
+   ============================================================ */
+
+.glow-text-ion {
+  text-shadow:
+    0 0 8px var(--ion),
+    0 0 20px rgba(0, 212, 255, 0.5),
+    0 0 40px rgba(0, 212, 255, 0.2);
+}
+.glow-text-ferrari {
+  text-shadow:
+    0 0 8px var(--ferrari),
+    0 0 20px rgba(220, 0, 0, 0.5),
+    0 0 40px rgba(220, 0, 0, 0.2);
+}
+.glow-text-gold {
+  text-shadow:
+    0 0 8px var(--gold),
+    0 0 20px rgba(201, 168, 76, 0.5);
+}
+.glow-text-ok {
+  text-shadow:
+    0 0 8px var(--status-ok),
+    0 0 16px rgba(0, 255, 136, 0.4);
+}
+
+.glow-box-ion {
+  box-shadow:
+    0 0 12px var(--ion-glow),
+    0 0 30px var(--ion-glow-sm),
+    inset 0 0 12px rgba(0, 212, 255, 0.04);
+}
+.glow-box-ferrari {
+  box-shadow:
+    0 0 12px var(--ferrari-glow),
+    0 0 30px var(--ferrari-glow-sm),
+    inset 0 0 12px rgba(220, 0, 0, 0.04);
+}
+
+/* ============================================================
+   KEYFRAME ANIMATIONS
+   ============================================================ */
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes pulse-ion {
+  0%, 100% { box-shadow: 0 0 6px var(--ion-glow-sm); }
+  50%       { box-shadow: 0 0 20px var(--ion-glow), 0 0 40px rgba(0, 212, 255, 0.08); }
+}
+
+@keyframes pulse-ferrari {
+  0%, 100% { box-shadow: 0 0 6px var(--ferrari-glow-sm); }
+  50%       { box-shadow: 0 0 20px var(--ferrari-glow), 0 0 40px rgba(220, 0, 0, 0.08); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+
+@keyframes scanline {
+  0%   { transform: translateY(-4px); opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 0.6; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+@keyframes noise {
+  0%, 100% { background-position: 0px 0px; }
+  10%       { background-position: -5% -10%; }
+  30%       { background-position: 7% -15%; }
+  50%       { background-position: -15% 10%; }
+  70%       { background-position: 10% 5%; }
+  90%       { background-position: -5% 15%; }
+}
+
+@keyframes rotate-cw {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes rotate-ccw {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}
+
+@keyframes flicker {
+  0%         { opacity: 0; }
+  10%        { opacity: 0.9; }
+  15%        { opacity: 0.3; }
+  25%        { opacity: 1; }
+  100%       { opacity: 1; }
+}
+
+@keyframes draw-h {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+
+@keyframes glitch-shift {
+  0%, 90%, 100% { transform: translateX(0); clip-path: none; }
+  91%           { transform: translateX(-3px); clip-path: polygon(0 20%, 100% 20%, 100% 22%, 0 22%); }
+  93%           { transform: translateX(3px);  clip-path: polygon(0 60%, 100% 60%, 100% 62%, 0 62%); }
+  95%           { transform: translateX(-2px); clip-path: polygon(0 40%, 100% 40%, 100% 42%, 0 42%); }
+  97%           { transform: translateX(0);    clip-path: none; }
+}
+
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.4); }
+}
+
+/* ============================================================
+   NOISE TEXTURE OVERLAY
+   ============================================================ */
+
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 160px 160px;
+  animation: noise 6s steps(8) infinite;
+}
+
+/* ============================================================
+   SCANLINE OVERLAY
+   ============================================================ */
+
+.scanline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(0, 212, 255, 0.06),
+    transparent
+  );
+  pointer-events: none;
+  animation: scanline 6s linear infinite;
+}
+
+/* ============================================================
+   TERMINAL TYPOGRAPHY
+   ============================================================ */
+
+.terminal-text {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  color: var(--text-terminal);
+}
+
+.terminal-dim {
+  color: var(--text-secondary);
 }
