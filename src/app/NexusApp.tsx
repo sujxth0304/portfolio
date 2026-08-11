@@ -7,6 +7,7 @@ import { BootSequence } from "@/components/boot/BootSequence";
 import { CommandHub } from "@/components/hud/CommandHub";
 import { IdentityModule } from "@/components/modules/IdentityModule";
 import { MissionsModule } from "@/components/modules/MissionsModule";
+import { NeuralMatrixModule } from "@/components/modules/NeuralMatrixModule";
 import { useNexusStore } from "@/stores/nexusStore";
 
 function ModuleLayer() {
@@ -20,7 +21,10 @@ function ModuleLayer() {
       {activeModule === "missions" && (
         <MissionsModule key="missions" />
       )}
-      {/* Remaining modules (matrix, chronicle, transmission) added in future sprints */}
+      {activeModule === "matrix" && (
+        <NeuralMatrixModule key="matrix" />
+      )}
+      {/* Remaining modules (chronicle, transmission) added in future sprints */}
     </AnimatePresence>
   );
 }
